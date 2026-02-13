@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>Hospital Patient Record System</title>
+
+<style>
+body{
+    font-family: Arial, sans-serif;
+    background:#f2f6f9;
+    padding:30px;
+}
+
+.container{
+    max-width:700px;
+    margin:auto;
+    background:white;
+    padding:20px;
+    border-radius:8px;
+}
+
+h2{
+    margin-top:0;
+}
+
+label{
+    display:block;
+    margin-top:12px;
+    font-weight:bold;
+}
+
+input, textarea, select{
+    width:100%;
+    padding:8px;
+    margin-top:4px;
+}
+
+button{
+    margin-top:15px;
+    padding:10px 16px;
+    cursor:pointer;
+}
+
+.actions button{
+    margin-right:10px;
+}
+
+.readonly input,
+.readonly textarea{
+    background:#eee;
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+
+<h2>Hospital Patient Record System</h2>
+
+<label>Select Patient</label>
+<select id="patientSelect"></select>
+
+<hr>
+
+<div id="formArea" class="readonly">
+
+<label>Patient Name</label>
+<input type="text" id="name">
+
+<label>Age</label>
+<input type="number" id="age">
+
+<label>Diagnosis</label>
+<textarea id="diagnosis"></textarea>
+
+</div>
+
+<div class="actions">
+    <button onclick="startEdit()">Edit</button>
+    <button onclick="saveChanges()">Save</button>
+    <button onclick="cancelEdit()">Cancel</button>
+</div>
+
+</div>
+
+<script>
+
+
+let patients = [
+    {
+        id: 1,
+        name: "Nila",
+        age: 45,
+        diagnosis: "Diabetes"
+    },
+    {
+        id: 2,
+        name: "Dinesh",
+        age: 32,
+        diagnosis: "Migraine"
+    }
+];
+
+let selectedPatient = null;     
+let clonedPatient = null;        
+let isEditing = false;
+
+
+
+window.onload = function(){
+    loadPatientDropdown();
+    selectPatient(0);
+};
+
+
+function loadPatientDropdown(){
+
+    const select = document.getElementById("patientSelect");
+    select.innerHTML = "";
+
+    patients.forEach((p, index)=>{
+        const option = document.createElement("option");
+        option.value = index;
+        option.textContent = p.name + " (ID: " + p.id + ")";
+        select.appendChild(option);
+    });
+
+    select.onchange = function(){
+        selectPatient(this.value);
+    };
+}
+
+
+function selectPatient(index){
+
+    selectedPatient = patients[index];
+
+    displayPatient(selectedPatient);
+    setReadOnly(true);
+
+    isEditing = false;
+    clonedPatient = null;
+}
+
+
+function displayPatient(patient){
+
+    document.getElementById("name").value = patient.name;
+    document.getElementById("age").value = patient.age;
+    document.getElementById("diagnosis").value = patient.diagnosis;
+}
+
+
+function startEdit(){
+
+    if(!selectedPatient) return;
+
+
+    clonedPatient = structuredClone(selectedPatient);
+
+    isEditing = true;
+    setReadOnly(false);
+}
+
+
+function saveChanges(){
+
+    if(!isEditing || !clonedPatient){
+        alert("Click Edit first.");
+        return;
+    }
+
+
+    clonedPatient.name = document.getElementById("name").value;
+    clonedPatient.age = Number(document.getElementById("age").value);
+    clonedPatient.diagnosis = document.getElementById("diagnosis").value;
+
+    Object.assign(selectedPatient, clonedPatient);
+
+    isEditing = false;
+    clonedPatient = null;
+
+    setReadOnly(true);
+    loadPatientDropdown();
+
+    alert("Patient record saved successfully.");
+}
+
+
+function cancelEdit(){
+
+    if(!isEditing || !clonedPatient){
+        return;
+    }
+
+    
+    displayPatient(selectedPatient);
+
+    isEditing = false;
+    clonedPatient = null;
+
+    setReadOnly(true);
+}
+
+
+function setReadOnly(flag){
+
+    const form = document.getElementById("formArea");
+
+    document.getElementById("name").readOnly = flag;
+    document.getElementById("age").readOnly = flag;
+    document.getElementById("diagnosis").readOnly = flag;
+
+    if(flag){
+        form.classList.add("readonly");
+    }else{
+        form.classList.remove("readonly");
+    }
+}
+
+</script>
+
+</body>
+</html>
