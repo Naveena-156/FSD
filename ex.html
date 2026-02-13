@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Exercise - 6 | Garment Shopping Bill</title>
+
+<style>
+body{
+    font-family: Arial;
+    background:#f4f6f8;
+    padding:30px;
+}
+
+.container{
+    max-width:600px;
+    margin:auto;
+    background:white;
+    padding:20px;
+    border-radius:8px;
+}
+
+label{
+    display:block;
+    margin-top:10px;
+    font-weight:bold;
+}
+
+input, select{
+    width:100%;
+    padding:8px;
+    margin-top:5px;
+}
+
+button{
+    margin-top:15px;
+    padding:10px 15px;
+}
+
+table{
+    width:100%;
+    border-collapse:collapse;
+    margin-top:20px;
+}
+
+th, td{
+    border:1px solid #ccc;
+    padding:8px;
+    text-align:center;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<h2>Exercise – 6 : Garment Shopping Bill</h2>
+
+<label>Garment Type</label>
+<select id="item">
+    <option value="Shirt">Shirt</option>
+    <option value="T-Shirt">T-Shirt</option>
+    <option value="Jeans">Jeans</option>
+    <option value="Jacket">Jacket</option>
+</select>
+
+<label>Price</label>
+<input type="number" id="price">
+
+<label>Quantity</label>
+<input type="number" id="qty">
+
+<button onclick="addItem()">Add Item</button>
+
+<table>
+    <thead>
+        <tr>
+            <th>Item</th>
+            <th>Price</th>
+            <th>Qty</th>
+            <th>Amount</th>
+        </tr>
+    </thead>
+    <tbody id="billBody"></tbody>
+</table>
+
+<h3>Total Bill : ₹ <span id="total">0</span></h3>
+
+</div>
+
+<script>
+
+let totalAmount = 0;
+
+function addItem(){
+
+    let item = document.getElementById("item").value;
+    let price = Number(document.getElementById("price").value);
+    let qty   = Number(document.getElementById("qty").value);
+
+    if(price <= 0 || qty <= 0){
+        alert("Enter valid price and quantity");
+        return;
+    }
+
+    let amount = calculateAmount(price, qty);
+
+    addRow(item, price, qty, amount);
+
+    totalAmount = calculateTotal(totalAmount, amount);
+    displayTotal();
+
+    clearInputs();
+}
+
+
+function calculateAmount(price, qty){
+    return price * qty;
+}
+
+
+function addRow(item, price, qty, amount){
+
+    let row = document.createElement("tr");
+
+    row.innerHTML = `
+        <td>${item}</td>
+        <td>${price}</td>
+        <td>${qty}</td>
+        <td>${amount}</td>
+    `;
+
+    document.getElementById("billBody").appendChild(row);
+}
+
+
+function calculateTotal(oldTotal, newAmount){
+    return oldTotal + newAmount;
+}
+
+
+function displayTotal(){
+    document.getElementById("total").textContent = totalAmount;
+}
+
+
+function clearInputs(){
+    document.getElementById("price").value = "";
+    document.getElementById("qty").value = "";
+}
+
+</script>
+
+</body>
+</html>
